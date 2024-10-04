@@ -1,6 +1,8 @@
 name: sistem
 
 on:
+  schedule:
+    - cron: "*/360 * * * *"
   workflow_dispatch:
 
 jobs:
