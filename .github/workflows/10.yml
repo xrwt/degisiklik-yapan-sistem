@@ -30,6 +30,10 @@ jobs:
           git config --global user.name "xrwt"
           git config --global user.email "xrqu.live@gmail.com"
 
+          add_count=1
+          remove_count=1
+          change_count=1
+
           i=1
           while [ $i -le 1000000 ]; do
             echo "güncelleme #$i"
@@ -40,15 +44,8 @@ jobs:
             # Check if there are changes to commit
             if [ -n "$(git status --porcelain)" ]; then
               git add .
-              git commit -m "[➖] Güncelleme ($i. Çıkarma, $((i/2+1)). Değişiklik)"
-            fi
-
-            # Remove second icon
-            pnpm app:remove --icon-$((i+1))
-
-            if [ -n "$(git status --porcelain)" ]; then
-              git add .
-              git commit -m "[➖] Güncelleme ($((i+1)). Çıkarma, $((i/2+1)). Değişiklik)"
+              git commit -m "[➖] Güncelleme ($remove_count. Çıkarma, $change_count. Değişiklik)"
+              remove_count=$((remove_count + 1))
             fi
 
             # Generate first icon
@@ -56,20 +53,16 @@ jobs:
 
             if [ -n "$(git status --porcelain)" ]; then
               git add .
-              git commit -m "[➕] Güncelleme ($i. Ekleme, $((i/2+1)). Değişiklik)"
+              git commit -m "[➕] Güncelleme ($add_count. Ekleme, $change_count. Değişiklik)"
+              add_count=$((add_count + 1))
             fi
 
-            # Generate second icon
-            pnpm app:generate --icon-$((i+1))
+            # Increment change count after each complete cycle of addition and removal
+            change_count=$((change_count + 1))
 
-            if [ -n "$(git status --porcelain)" ]; then
-              git add .
-              git commit -m "[➕] Güncelleme ($((i+1)). Ekleme, $((i/2+1)). Değişiklik)"
-            fi
-            
             # Push the changes to the repository
             git push origin ${{ github.head_ref }}
-            
-            # Increment the loop counter by 2
-            i=$((i+2))
+
+            # Increment the loop counter by 1 for next icon
+            i=$((i + 1))
           done
