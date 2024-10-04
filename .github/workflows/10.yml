@@ -33,26 +33,39 @@ jobs:
           i=1
           while [ $i -le 1000000 ]; do
             echo "güncelleme #$i"
-            
+
             # Remove first icon
             pnpm app:remove --icon-$i
-            git add .
-            git commit -m "[➖] Güncelleme ($i. Değişiklik)"
-            
+
+            # Check if there are changes to commit
+            if [ -n "$(git status --porcelain)" ]; then
+              git add .
+              git commit -m "[➖] Güncelleme ($i. Değişiklik)"
+            fi
+
             # Remove second icon
             pnpm app:remove --icon-$((i+1))
-            git add .
-            git commit -m "[➖] Güncelleme ($((i+1)). Değişiklik)"
-            
+
+            if [ -n "$(git status --porcelain)" ]; then
+              git add .
+              git commit -m "[➖] Güncelleme ($((i+1)). Değişiklik)"
+            fi
+
             # Generate first icon
             pnpm app:generate --icon-$i
-            git add .
-            git commit -m "[➕] Güncelleme ($i. Değişiklik)"
-            
+
+            if [ -n "$(git status --porcelain)" ]; then
+              git add .
+              git commit -m "[➕] Güncelleme ($i. Değişiklik)"
+            fi
+
             # Generate second icon
             pnpm app:generate --icon-$((i+1))
-            git add .
-            git commit -m "[➕] Güncelleme ($((i+1)). Değişiklik)"
+
+            if [ -n "$(git status --porcelain)" ]; then
+              git add .
+              git commit -m "[➕] Güncelleme ($((i+1)). Değişiklik)"
+            fi
             
             # Push the changes to the repository
             git push origin ${{ github.head_ref }}
