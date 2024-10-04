@@ -27,8 +27,8 @@ jobs:
         run: pnpm install
       - name: 🔄 1.000.000 icon güncelle
         run: |
-          git config --global user.name "heytrgithub"
-          git config --global user.email "brawlertarikiletisim@gmail.com"
+          git config --global user.name "xrwt"
+          git config --global user.email "xrqu.live@gmail.com"
 
           for i in {1..1000000}; do
             echo "güncelleme #$i"
