@@ -30,40 +30,32 @@ jobs:
           git config --global user.name "xrwt"
           git config --global user.email "xrqu.live@gmail.com"
 
-          add_count=1
-          remove_count=1
           change_count=1
 
           for i in {1..1000000}; do
             echo "güncelleme #$i"
 
-            # İlk iki ikon oluştur
+            # 2 ikon oluştur ve commit et
             for j in {1..2}; do
               pnpm app:generate --icon-$((i * 2 - 1))
               pnpm app:generate --icon-$((i * 2))
-              
-              # Commit işlemi için kontrol et
-              if [ -n "$(git status --porcelain)" ]; then
-                git add .
-                git commit -m "[➕] Güncelleme ($((add_count + 1)). Ekleme, $change_count. Değişiklik)"
-                add_count=$((add_count + 1))
-              fi
-            done
 
-            # İki ikonu kaldır
+              # Commit işlemi
+              git add .
+              git commit -m "[➕] Güncelleme ($((change_count + 1)). Ekleme, $change_count. Değişiklik)"
+            done
+            
+            # 2 ikon kaldır ve commit et
             for j in {1..2}; do
               pnpm app:remove --icon-$((i * 2 - 1))
               pnpm app:remove --icon-$((i * 2))
 
-              # Commit işlemi için kontrol et
-              if [ -n "$(git status --porcelain)" ]; then
-                git add .
-                git commit -m "[➖] Güncelleme ($((remove_count + 1)). Çıkarma, $change_count. Değişiklik)"
-                remove_count=$((remove_count + 1))
-              fi
+              # Commit işlemi
+              git add .
+              git commit -m "[➖] Güncelleme ($((change_count + 1)). Çıkarma, $change_count. Değişiklik)"
             done
 
-            # Push işlemleri
+            # Push işlemi
             git push origin ${{ github.head_ref }}
 
             # Değişiklik sayısını artır
