@@ -31,29 +31,30 @@ jobs:
           git config --global user.email "xrqu.live@gmail.com"
 
           change_count=1
+          addition_count=1
 
           for i in {1..1000000}; do
             echo "güncelleme #$i"
 
             # 2 ikon oluştur
             for j in {1..2}; do
-              pnpm app:generate --icon-$((i * 2 - 1))
-              pnpm app:generate --icon-$((i * 2))
+              pnpm app:generate --icon-$((addition_count * 2 - 1))
+              pnpm app:generate --icon-$((addition_count * 2))
             done
             
-            # İkonları commit et
+            # Ekleme commit et
             git add .
-            git commit -m "[➕] Güncelleme ($((change_count)). Ekleme, $change_count. Değişiklik)"
+            git commit -m "[➕] Güncelleme ($((addition_count)). Ekleme, $change_count. Değişiklik)"
             
             # 2 ikon kaldır
             for j in {1..2}; do
-              pnpm app:remove --icon-$((i * 2 - 1))
-              pnpm app:remove --icon-$((i * 2))
+              pnpm app:remove --icon-$((addition_count * 2 - 1))
+              pnpm app:remove --icon-$((addition_count * 2))
             done
             
-            # İkonları commit et
+            # Çıkarma commit et
             git add .
-            git commit -m "[➖] Güncelleme ($((change_count)). Çıkarma, $change_count. Değişiklik)"
+            git commit -m "[➖] Güncelleme ($((addition_count)). Çıkarma, $change_count. Değişiklik)"
 
             # Push işlemi
             git push origin main
@@ -61,6 +62,12 @@ jobs:
             # 1 milisaniye bekle
             sleep 0.001
 
-            # Değişiklik sayısını artır
-            change_count=$((change_count + 1))
+            # Ekleme sayısını artır
+            addition_count=$((addition_count + 1))
+
+            # 1. Değişiklikte 2 kez güncelleme yapıldıktan sonra değişiklik sayısını artır
+            if [[ $addition_count -gt 2 ]]; then
+              change_count=$((change_count + 1))
+              addition_count=1  # Ekleme sayısını sıfırla
+            fi
           done
