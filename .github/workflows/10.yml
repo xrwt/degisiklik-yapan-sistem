@@ -33,21 +33,25 @@ jobs:
           for i in {1..1000000}; do
             echo "güncelleme #$i"
             
-            # Remove two icons
+            # Remove first icon
             pnpm app:remove --icon-$i
+            git add .
+            git commit -m "[➖] Güncelleme ($i. Değişiklik)"
+            
+            # Remove second icon
             pnpm app:remove --icon-$((i+1))
-            
-            # Commit the removal
             git add .
-            git commit -m "[➖] Güncelleme ($i. ve $((i+1)). Değişiklik)"
-
-            # Generate two icons
+            git commit -m "[➖] Güncelleme ($((i+1)). Değişiklik)"
+            
+            # Generate first icon
             pnpm app:generate --icon-$i
-            pnpm app:generate --icon-$((i+1))
-            
-            # Commit the addition
             git add .
-            git commit -m "[➕] Güncelleme ($i. ve $((i+1)). Değişiklik)"
+            git commit -m "[➕] Güncelleme ($i. Değişiklik)"
+            
+            # Generate second icon
+            pnpm app:generate --icon-$((i+1))
+            git add .
+            git commit -m "[➕] Güncelleme ($((i+1)). Değişiklik)"
             
             # Push the changes to the repository
             git push origin ${{ github.head_ref }}
