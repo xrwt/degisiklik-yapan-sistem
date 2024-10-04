@@ -38,31 +38,33 @@ jobs:
           while [ $i -le 1000000 ]; do
             echo "güncelleme #$i"
 
-            # Remove first icon
-            pnpm app:remove --icon-$i
-
-            # Check if there are changes to commit
-            if [ -n "$(git status --porcelain)" ]; then
-              git add .
-              git commit -m "[➖] Güncelleme ($remove_count. Çıkarma, $change_count. Değişiklik)"
-              remove_count=$((remove_count + 1))
-            fi
-
             # Generate first icon
             pnpm app:generate --icon-$i
 
+            # Check if there are changes to commit for addition
             if [ -n "$(git status --porcelain)" ]; then
               git add .
               git commit -m "[➕] Güncelleme ($add_count. Ekleme, $change_count. Değişiklik)"
               add_count=$((add_count + 1))
             fi
 
-            # Increment change count after each complete cycle of addition and removal
-            change_count=$((change_count + 1))
-
-            # Push the changes to the repository
+            # Push changes for addition
             git push origin ${{ github.head_ref }}
 
-            # Increment the loop counter by 1 for next icon
+            # Remove first icon
+            pnpm app:remove --icon-$i
+
+            # Check if there are changes to commit for removal
+            if [ -n "$(git status --porcelain)" ]; then
+              git add .
+              git commit -m "[➖] Güncelleme ($remove_count. Çıkarma, $change_count. Değişiklik)"
+              remove_count=$((remove_count + 1))
+            fi
+
+            # Push changes for removal
+            git push origin ${{ github.head_ref }}
+
+            # Increment change count after each complete cycle of addition and removal
+            change_count=1
             i=$((i + 1))
           done
